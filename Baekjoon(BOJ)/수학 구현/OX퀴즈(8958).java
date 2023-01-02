@@ -1,4 +1,3 @@
-package 듣보잡;
 
 import java.io.BufferedReader;
 import java.io.IOException;
