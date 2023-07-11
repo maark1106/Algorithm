@@ -49,7 +49,7 @@ int main() {
 		for (int j = 1; j <= 7; j++)
 			cin >> map[i][j];
 
-	map[1][1] = 0;
+	map[1][1] = 1;
 	Q.push({ 0,{ 1,1 } });
 	BFS();	
 
