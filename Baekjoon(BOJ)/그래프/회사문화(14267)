@@ -1,0 +1,58 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class Main {
+
+    int N, M;
+    int[] good;
+    ArrayList<Integer>[] graph;
+
+    void solution() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        good = new int[N + 1];
+        graph = new ArrayList[N + 1];
+
+        for(int i = 0;i<=N;i++){
+            graph[i] = new ArrayList<>();
+        }
+
+        st = new StringTokenizer(br.readLine());
+        for (int i = 1; i <= N; i++) {
+            int num = Integer.parseInt(st.nextToken());
+            if(num != -1){
+                graph[num].add(i);
+            }
+        }
+
+        for(int i = 1;i<=M;i++){
+            st = new StringTokenizer(br.readLine());
+            int number = Integer.parseInt(st.nextToken());
+            int w = Integer.parseInt(st.nextToken());
+            good[number] += w;
+        }
+
+        DFS(1);
+
+        for(int i = 1; i <= N;i++){
+            System.out.print(good[i] + " ");
+        }
+    }
+
+    void DFS(int d) {
+        for(int c : graph[d]){
+            good[c] += good[d];
+            DFS(c);
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        new Main().solution();
+    }
+}
