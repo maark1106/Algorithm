@@ -1,75 +1,93 @@
-package new_.컨베이어벨트위의로봇_20055;
+package anew_.컨베이어벨트위의로봇_20055;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
-public class Main {
+class Main{
+
+    /*
+        1. 칸의 개수 검사하여 K인지 확인
+        2. robots를 boolean으로 관리하여 한칸씩 밀기
+        3. robot[N] = false;
+           다음 칸 내구도 남음 && 로봇 없음
+           이동, 내구도 감소
+        4. robot[1] 내구도 남음 -> robot 올림
+            내구도 감소
+        5. 반복
+    */
 
     int N;
     int K;
-    int[][] belt;
+    boolean[] robots;
+    int[] board;
 
-    void solution() throws IOException {
+    public static void main(String[] args) throws Exception{
+        new Main().solution();
+    }
+
+    void solution() throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
-
-        // [0] : 벨트 내구도, [1] : 로봇 존재 여부
-        belt = new int[2 * N][2];
+        robots = new boolean[2 * N + 1];
+        board = new int[2 * N + 1];
 
         st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < 2 * N; i++) {
-            belt[i][0] = Integer.parseInt(st.nextToken());
+        for(int i = 1; i <= 2 * N; i++){
+            board[i] = Integer.parseInt(st.nextToken());
         }
 
         int res = 0;
-        while (true) {
+        while(isAvailable()){ //칸의 개수 검사하여 K인지 확인
+            moveRobotsAndBoard(); // 한 칸씩 밀기
+            robots[N] = false; // N위치는 무조건 내리기
+            moveIfAvailable();
+            robots[N] = false;
+            putFirstBoard();
             res++;
-            int temp = belt[2 * N - 1][0];
-            for (int i = 2 * N - 1; i > 0; i--) {
-                belt[i][0] = belt[i - 1][0];
-                belt[i][1] = belt[i - 1][1];
-            }
+        }
 
-            belt[0][0] = temp;
-            belt[0][1] = 0;
-            belt[N - 1][1] = 0;
+        System.out.print(res);
+    }
 
-            // N - 1가면 하차
-            for (int i = N - 2; i >= 0; i--) {
-                if (belt[i][1] == 1) {
-                    if (belt[i + 1][0] > 0 && belt[i + 1][1] != 1) {
-                        belt[i][1] = 0;
-                        belt[i + 1][1] = 1;
-                        belt[i + 1][0]--;
-                    }
-                }
+    boolean isAvailable(){
+        int cnt = 0;
+        for(int i= 1; i<= 2*N; i++){
+            if(board[i] == 0){
+                cnt++;
             }
-            belt[N - 1][1] = 0;
+        }
 
-            if (belt[0][0] > 0) {
-                belt[0][1] = 1;
-                belt[0][0]--;
-            }
+        return cnt < K;
+    }
 
-            int cnt = 0;
-            for (int i = 0; i < 2 * N; i++) {
-                if (belt[i][0] == 0) {
-                    cnt++;
-                }
-            }
-            if (cnt >= K) {
-                System.out.println(res);
-                break;
+    void moveRobotsAndBoard(){ // 로봇과 칸 같이 이동
+        boolean temp = robots[2*N];
+        int temp1 = board[2*N];
+        for(int i = 2*N; i>= 2; i--){
+            robots[i] = robots[i - 1];
+            board[i] = board[i - 1];
+        }
+        robots[1] = temp;
+        board[1] = temp1;
+    }
+
+    void moveIfAvailable(){ // N번 칸에는 무조건 로봇 없음
+        for(int i = N - 1; i >= 1; i--){
+            if(robots[i] && !robots[i + 1] && board[i + 1] > 0){ // 내 다음칸에 로봇이 없고 내구도가 남아있다면
+                robots[i + 1] = true;
+                robots[i] = false;
+                board[i + 1]--;
             }
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        new Main().solution();
+    void putFirstBoard(){
+        if(board[1] > 0){
+            robots[1] = true;
+            board[1]--;
+        }
     }
 }
