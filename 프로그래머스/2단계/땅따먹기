@@ -1,0 +1,41 @@
+import java.util.*;
+
+class Solution {
+    int solution(int[][] land) {
+        
+        for(int i = 1; i < land.length; i++){
+            int first = land[i - 1][0];
+            int firstIdx = 0;
+            int second = 0;
+            int secondIdx = 0;
+            for(int j = 1; j < 4; j++){
+                if(first <= land[i - 1][j]){
+                    second = first;
+                    secondIdx = firstIdx;
+                    first = land[i - 1][j];
+                    firstIdx = j;
+                }
+                else if(second <= land[i - 1][j]){
+                    second = land[i - 1][j];
+                    secondIdx = j;
+                }
+            }
+            
+            for(int j = 0; j < 4; j++){
+                if(j != firstIdx){
+                    land[i][j] += first;
+                }
+                else{
+                    land[i][j] += second;
+                }
+            }
+        }
+        
+        int answer = 0;
+        for(int i = 0 ; i < 4; i++){
+            answer = Math.max(answer, land[land.length - 1][i]);
+        }
+        
+        return answer;
+    }
+}
